@@ -13,10 +13,16 @@ authRouter.post(
 	validateSchema,
 	async (req: Request, res: Response) => {
 		try {
-			const token = await userService.login(req.body.email, req.body.password);
-			return res.json({ token });
+			const { token, user } = await userService.login(
+				req.body.email,
+				req.body.password
+			);
+			const userData = { firstName: user.firstName, lastName: user.lastName };
+			return res.json({ token, userData });
 		} catch (e) {
-			res.status(400).json({ message: e });
+			res
+				.status(400)
+				.json({ message: "The credentials you entered were invalid." });
 		}
 	}
 );
@@ -50,7 +56,7 @@ authRouter.post(
 	}
 );
 
-authRouter.get("/home", authenticateToken, (req: Request, res: Response) => {
+authRouter.get("/me", authenticateToken, (req: Request, res: Response) => {
 	return res.json({
 		firstName: req.user?.firstName,
 		lastName: req.user?.lastName,

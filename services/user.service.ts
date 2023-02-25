@@ -17,8 +17,12 @@ export default {
 		});
 
 		await user.save();
+		const token = tokenService.generateAccessToken(user.email);
 
-		return user;
+		return {
+			user,
+			token,
+		};
 	},
 
 	async findByEmail(email: string) {
@@ -34,6 +38,6 @@ export default {
 		if (!passwordIsValid) throw new Error("Wrong password!");
 
 		const token = tokenService.generateAccessToken(user.email);
-		return token;
+		return { token, user };
 	},
 };
